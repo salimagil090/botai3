@@ -98,14 +98,16 @@ export default function Dashboard() {
     setIsGenerating(true);
     const newSignal = generateSignal();
 
-    const { data, error } = await supabase
-      .from('trading_signals')
-      .insert([newSignal])
-      .select()
-      .single();
+    if (newSignal) {
+      const { data, error } = await supabase
+        .from('trading_signals')
+        .insert([newSignal])
+        .select()
+        .single();
 
-    if (!error && data) {
-      setCurrentSignal(data);
+      if (!error && data) {
+        setCurrentSignal(data);
+      }
     }
     setIsGenerating(false);
   };
