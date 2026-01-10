@@ -94,6 +94,27 @@ export default function Dashboard() {
     }
   };
 
+  const sendToTelegram = async (signal: TradingSignal) => {
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-telegram-signal`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ signal }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send Telegram notification');
+      }
+    } catch (error) {
+      console.error('Telegram error:', error);
+    }
+  };
+
   const generateAndSaveSignal = async () => {
     setIsGenerating(true);
     const newSignal = generateSignal();
@@ -107,6 +128,7 @@ export default function Dashboard() {
 
       if (!error && data) {
         setCurrentSignal(data);
+        await sendToTelegram(data);
       }
     }
     setIsGenerating(false);
