@@ -148,6 +148,7 @@ export default function Dashboard() {
 
   const toggleMode = () => {
     setIsAutoMode(!isAutoMode);
+    setIsGenerating(false);
   };
 
   const totalSignals = signals.length;
