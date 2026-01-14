@@ -360,32 +360,29 @@ export function generateSignal() {
   const session = getCurrentSession();
   const pairs = session.pairs;
 
-  let attempts = 0;
-  const maxAttempts = 10;
+  let bestSignal = null;
+  let bestConfidence = 0;
 
-  while (attempts < maxAttempts) {
-    const pair = pairs[Math.floor(Math.random() * pairs.length)];
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i];
     const { action, confidence } = analyzePattern(pair);
 
-    if (confidence >= 50) {
-      const mtf = analyzeMultiTimeframe(pair);
-      const finalConfidence = Math.min(99, Math.round(confidence + (mtf * 5)));
-
-      if (finalConfidence >= 55) {
-        const { start, end } = getNextFiveMinuteInterval();
-
-        return {
-          pair,
-          action,
-          confidence: finalConfidence,
-          start_time: start.toISOString(),
-          end_time: end.toISOString(),
-          session: session.name
-        };
-      }
+    if (confidence > bestConfidence) {
+      bestConfidence = confidence;
+      bestSignal = { pair, action, confidence };
     }
+  }
 
-    attempts++;
+  if (bestSignal) {
+    const { start, end } = getNextFiveMinuteInterval();
+    return {
+      pair: bestSignal.pair,
+      action: bestSignal.action,
+      confidence: bestSignal.confidence,
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      session: session.name
+    };
   }
 
   return null;
