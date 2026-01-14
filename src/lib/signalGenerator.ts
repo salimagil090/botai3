@@ -361,17 +361,17 @@ export function generateSignal() {
   const pairs = session.pairs;
 
   let attempts = 0;
-  const maxAttempts = 20;
+  const maxAttempts = 10;
 
   while (attempts < maxAttempts) {
     const pair = pairs[Math.floor(Math.random() * pairs.length)];
     const { action, confidence } = analyzePattern(pair);
 
-    if (confidence >= 85) {
+    if (confidence >= 50) {
       const mtf = analyzeMultiTimeframe(pair);
       const finalConfidence = Math.min(99, Math.round(confidence + (mtf * 5)));
 
-      if (finalConfidence >= 88) {
+      if (finalConfidence >= 55) {
         const { start, end } = getNextFiveMinuteInterval();
 
         return {
